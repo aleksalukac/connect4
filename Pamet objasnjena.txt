@@ -1,0 +1,6 @@
+Otkriva svoja 3 za redom i resava ih
+Otkriva protivnikova 3 za redom i preseca ih
+Otkriva zabranjena polja (ako stavi tu, izgubice u sledecem)
+Otkriva polja koja mu za 2 poteza mogu doneti pobedu
+Otkriva polja koja mu za 3 poteza mogu doneti pomoc
+Predaje se ako ne moze da pobedi

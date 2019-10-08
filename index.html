@@ -1,0 +1,97 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+    <title>4 in line</title>     
+    <link rel="shortcut icon" href="logo.png" /> 
+    <script src="mind.js"></script>     
+    <link rel="stylesheet" type="text/css" href="style.css"> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <style> 
+        body {font-family: "Lato", sans-serif}
+        .mySlides {display: none}
+</style>     
+    <body> 
+        <!-- Page content -->         
+        <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px; min-width:440px" id="band">
+           <div class="w3-row w3-padding-32">
+            <br>
+            <button onclick="submitButtonStyle(0)" type="submit" class="button" width="300" height="600" id="5"> </button>
+            <button onclick="submitButtonStyle(1)" type="submit" class="button" width="300" height="600" id="15"> </button>
+            <button onclick="submitButtonStyle(2)" type="submit" class="button" width="300" height="600" id="25"> </button>
+            <button onclick="submitButtonStyle(3)" type="submit" class="button" width="300" height="600" id="35"> </button>
+            <button onclick="submitButtonStyle(4)" type="submit" class="button" width="300" height="600" id="45"> </button>
+            <button onclick="submitButtonStyle(5)" type="submit" class="button" width="300" height="600" id="55"> </button>
+            <br>
+            
+            <button onclick="submitButtonStyle(0)" type="submit" class="button" width="300" height="600" id="4"> </button>
+            <button onclick="submitButtonStyle(1)" type="submit" class="button" width="300" height="600" id="14"> </button>
+            <button onclick="submitButtonStyle(2)" type="submit" class="button" width="300" height="600" id="24"> </button>
+            <button onclick="submitButtonStyle(3)" type="submit" class="button" width="300" height="600" id="34"> </button>
+            <button onclick="submitButtonStyle(4)" type="submit" class="button" width="300" height="600" id="44"> </button>
+            <button onclick="submitButtonStyle(5)" type="submit" class="button" width="300" height="600" id="54"> </button>
+            <br>
+            
+            <button onclick="submitButtonStyle(0)" type="submit" class="button" width="300" height="600" id="3"> </button>
+            <button onclick="submitButtonStyle(1)" type="submit" class="button" width="300" height="600" id="13"> </button>
+            <button onclick="submitButtonStyle(2)" type="submit" class="button" width="300" height="600" id="23"> </button>
+            <button onclick="submitButtonStyle(3)" type="submit" class="button" width="300" height="600" id="33"> </button>
+            <button onclick="submitButtonStyle(4)" type="submit" class="button" width="300" height="600" id="43"> </button>
+            <button onclick="submitButtonStyle(5)" type="submit" class="button" width="300" height="600" id="53"> </button>
+            <br>
+    
+            <button onclick="submitButtonStyle(0)" type="submit" class="button" width="300" height="600" id="2"> </button>
+            <button onclick="submitButtonStyle(1)" type="submit" class="button" width="300" height="600" id="12"> </button>
+            <button onclick="submitButtonStyle(2)" type="submit" class="button" width="300" height="600" id="22"> </button>
+            <button onclick="submitButtonStyle(3)" type="submit" class="button" width="300" height="600" id="32"> </button>
+            <button onclick="submitButtonStyle(4)" type="submit" class="button" width="300" height="600" id="42"> </button>
+            <button onclick="submitButtonStyle(5)" type="submit" class="button" width="300" height="600" id="52"> </button>
+            <br>
+            
+            <button onclick="submitButtonStyle(0)" type="submit" class="button" width="300" height="600" id="1"> </button>
+            <button onclick="submitButtonStyle(1)" type="submit" class="button" width="300" height="600" id="11"> </button>
+            <button onclick="submitButtonStyle(2)" type="submit" class="button" width="300" height="600" id="21"> </button>
+            <button onclick="submitButtonStyle(3)" type="submit" class="button" width="300" height="600" id="31"> </button>
+            <button onclick="submitButtonStyle(4)" type="submit" class="button" width="300" height="600" id="41"> </button>
+            <button onclick="submitButtonStyle(5)" type="submit" class="button" width="300" height="600" id="51"> </button>
+            <br>
+            
+            <button onclick="submitButtonStyle(0)" type="submit" class="button" width="300" height="600" id="0"> </button>
+            <button onclick="submitButtonStyle(1)" type="submit" class="button" width="300" height="600" id="10"> </button>
+            <button onclick="submitButtonStyle(2)" type="submit" class="button" width="300" height="600" id="20"> </button>
+            <button onclick="submitButtonStyle(3)" type="submit" class="button" width="300" height="600" id="30"> </button>
+            <button onclick="submitButtonStyle(4)" type="submit" class="button" width="300" height="600" id="40"> </button>
+            <button onclick="submitButtonStyle(5)" type="submit" class="button" width="300" height="600" id="50"> </button>
+            <br><br>
+                <button onclick="location.reload()" type="submit" class="button" width="500" value="New game" style="background-color: white; color: black; border: thin solid black;">New game</button>
+                <br><i><div id="cong" style="font-size: 25px;"></div></i>
+               
+            </div>
+          </div>      
+          <div class="w3-black" id="tour">
+            <div class="w3-container w3-content w3-padding-64" style="max-width:800px">
+                
+                <h1 class="w3-wide w3-center"><img src="logo.png" width = 80></h2>
+              <h1 class="w3-wide w3-center">4 in line Bot</h2>
+              <h3 class="w3-justify" >Connect Four (also known as Captain's Mistress, Four Up, Plot Four, Find Four, Four in a Row, Four in a Line, Drop Four, and Gravitrips (in Soviet Union)) is a two-player connection game in which the players 
+                  first choose a color and then take turns dropping one colored disc from the top into a seven-column, 
+                  six-row vertically suspended grid. The pieces fall straight down, occupying the lowest available space within the column. 
+                  The objective of the game is to be the first to form a horizontal, vertical, or diagonal line of four of one's own discs.<br></p>
+             
+            </div>
+          </div>
+        <!-- Image of location/map -->                  
+        <!-- Footer -->         
+        <footer class="w3-container w3-padding-64 w3-center w3-opacity w3-light-grey w3-xlarge"> 
+            <i class=""><img src="http://www.aleksa.lukac.rs/img/logo3.png" width=50/></i> 
+            <p class="w3-medium"><a href="https://aleksa.lukac.rs" target="_blank">aleksa.lukac.rs</a></p> 
+        </footer>         
+          
+        <script>
+            setup(6);
+        </script>
+        <script src="menu.js"></script>
+    </body>     
+</html>

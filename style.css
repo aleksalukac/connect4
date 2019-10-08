@@ -1,0 +1,37 @@
+         .button {
+            background-color: grey;
+            border: none;
+            color: white;
+            padding: 15px 15px;
+            border-color: coral;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            transform: scale(1.1); /* (110% zoom) */
+        }
+
+        .info {
+            background-color: #DCDCDC;
+            border: none;
+            color: black;
+            padding: 9px 10px 15px 13px;
+            
+            font-size: 12px;
+            text-align: center;
+            margin: 4px 2px;
+            /*
+            font-size: 16px;
+            /*border-color: coral;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;*/
+        }
