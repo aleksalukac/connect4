@@ -359,6 +359,33 @@ function doCoolFalling(column, place, color, i = 5) {
     setTimeout(function() { doCoolFalling(column,place,color,i-1)}, 120);
 }
 
+function dropTableFalling(max, table = matrix, k = 0) {
+	if(k == 7)
+	{
+		setTimeout(function() {location.reload()}, max * 200);
+		return;
+	}
+		
+
+	for(var i = 0; i < 6; i++)
+	{
+		for(var j = 0; j < 6; j++)
+		{
+			if(j == 5)
+			{
+				document.getElementById((i*10 + j).toString()).style.backgroundColor = neutralColor;
+			}
+			else
+			{document.getElementById((i*10 + j).toString()).style.backgroundColor = document.getElementById((i*10 + j + 1).toString()).style.backgroundColor; 
+		
+
+			}
+		}
+	}
+	setTimeout(function () { dropTableFalling(max, table, k+1)}, 200);
+
+}
+
 function congratulations(table){
     // alert("Congratulations!");
 	
@@ -377,9 +404,25 @@ function congratulations(table){
 	{
 		document.getElementById("cong").innerText = 'It\'s a stalemate :| \n\n Play another game!';
 	}
-            // location.reload();
+
+	
 }
 
+function newGame() {
+	var max = numberOfClicks[0];
+	for(var i = 1; i < 6; i++)
+	{
+		if(numberOfClicks[i] > max)
+			max = numberOfClicks[i];
+	}
+	dropTableFalling(max);
+}
+
+function submitButtonStyleFromPlayer(b) {
+	if(turn == -1)
+	return
+	submitButtonStyle(b);
+}
 
 function submitButtonStyle(b) {
     if(finished) return;
