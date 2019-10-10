@@ -166,7 +166,7 @@ function makeBotMove(table)
 			pos = safeMoves[i];
 		}
 	}
-	if(max > 0)
+	if(max > 0 && numberOfClicks[pos] < 6)
 	{
 		console.log("Potential win in 2 moves: " + pos.toString());
 		submitButtonStyle(pos);
@@ -214,7 +214,7 @@ function makeBotMove(table)
 		}
 	}
 	console.log("Max za poraz: " + max.toString());
-	if(max > 1) //if it is not too dangerous, we will rather play a more "aggressive" move
+	if(max > 1 && numberOfClicks[pos] < 6) //if it is not too dangerous, we will rather play a more "aggressive" move
 	{
 		console.log("Potential lose in 2 moves: " + pos.toString());
 		submitButtonStyle(pos);
@@ -277,7 +277,7 @@ function makeBotMove(table)
 			pos = safeMoves[i];
 		}
 	}
-	if(max > 0)
+	if(max > 0 && numberOfClicks[pos] < 6)
 	{
 		console.log("Potential win in 3 moves: " + pos.toString());
 		submitButtonStyle(pos);
@@ -292,7 +292,7 @@ function makeBotMove(table)
 	}
 
 	//If there are no good options, but bot still has to play, bot will play a random move and lose
-	if(safeMoves.length == 0)
+	if(safeMoves.length == 0 && numberOfClicks[forbidden[0]] < 6)
 	{
 		console.log("Surrender: " + forbidden[0].toString());
 		submitButtonStyle(forbidden[0]);
@@ -309,14 +309,11 @@ function setup(size)
 {
     var solved = [];
     boardSize = size;
-    //alert('setup');
     for(var i=0; i < boardSize; i++) {
         matrix[i] = [];
         numberOfClicks[i] = 0;
-        //solved[i] = [];
         for(var j=0; j < boardSize; j++) {
             matrix[i][j] = 0;
-            //solved[i][j] = Math.floor(Math.random() * 2); 
         }
     }   
     if(Math.random() > 0.5 == 0)
@@ -327,20 +324,12 @@ function setup(size)
                 submitButtonStyle(3);
                 //makeBotMove();
             }
-    //turn = Math.random() % 2 == 0 ? 1 : -1;
-    //extra
-
-    
-    //check();
 }
-
-
-/*console.log(document.getElementById("c1").innerText);
-document.getElementById("c1").innerText  = column[0].toString();*/
 
 var color_1 = "#F10026";
 var color1 = "#3d9ad1";
 var neutralColor = "#808080";
+//var canDoFalling = true;
 
 function doCoolFalling(column, place, color, i = 5) {
 	if(place == 5) {
@@ -362,11 +351,12 @@ function doCoolFalling(column, place, color, i = 5) {
 function dropTableFalling(max, table = matrix, k = 0) {
 	if(k == 7)
 	{
-		setTimeout(function() {location.reload()}, max * 200);
+		//setTimeout(function() {location.reload()}, max * 200);
+		setup(6);
+		setTimeout(function() {location.reload()}, 400);
 		return;
 	}
 		
-
 	for(var i = 0; i < 6; i++)
 	{
 		for(var j = 0; j < 6; j++)
@@ -404,11 +394,11 @@ function congratulations(table){
 	{
 		document.getElementById("cong").innerText = 'It\'s a stalemate :| \n\n Play another game!';
 	}
-
-	
 }
 
 function newGame() {
+
+	finished = true;
 	var max = numberOfClicks[0];
 	for(var i = 1; i < 6; i++)
 	{
@@ -419,7 +409,7 @@ function newGame() {
 }
 
 function submitButtonStyleFromPlayer(b) {
-	if(turn == -1)
+	if(turn == -1 /*&& canDoFalling*/)
 	return
 	submitButtonStyle(b);
 }
@@ -429,15 +419,18 @@ function submitButtonStyle(b) {
 
     if(numberOfClicks[b] == 6) return;
 
+	//canDoFalling = false;
     if(turn == -1){
-        doCoolFalling(b, numberOfClicks[b], color_1);
+		doCoolFalling(b, numberOfClicks[b], color_1);
         //document.getElementById((b*10 + numberOfClicks[b]).toString()).style.backgroundColor = color_1; 
 
     }
     else{
         doCoolFalling(b, numberOfClicks[b], color1);
         //document.getElementById((b*10 + numberOfClicks[b]).toString()).style.backgroundColor = color1;
-    } 
+	} 
+	
+	//setTimeout(function() { canDoFalling = true}, 300);
 
     matrix[b][numberOfClicks[b]] = turn;
 
@@ -457,7 +450,7 @@ function submitButtonStyle(b) {
 
     if(turn == -1)
         {
-			setTimeout(function(){makeBotMove(matrix);},500);
+			setTimeout(function(){makeBotMove(matrix);},900);
            
            //turn = 1;
         }
@@ -638,7 +631,7 @@ function checkTable(table) //return -1 or 1 if the game is won by any player, 0 
 
 	for (var i = 0; i < 6; i++)
 	{
-		emptyCells += numberOfClicks[i];
+		emptyCells += 6 - numberOfClicks[i];
 	}
 
 	if (emptyCells == 0)
