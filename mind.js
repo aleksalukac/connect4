@@ -90,6 +90,7 @@ function makeBotMove(table)
 	}
 	
 	var forbidden = []; //if we play one of these moves, opponent can win in his next move 
+	var betterNotPlay = []; //we are trying to avoid these moves and we want our opponent to play them first, so we could win in the next move
 
 	for (var i = 0; i < 6; i++)
 	{
@@ -124,6 +125,7 @@ function makeBotMove(table)
 			safeMoves.push(preferred[i]);
 		}
 	}
+
 	console.log("Safe moves: ");
 	console.log(safeMoves);
 
@@ -141,17 +143,34 @@ function makeBotMove(table)
 				{
 					if(checkTable(testTable) == -1)
 					{
+						if(safeMoves[i] == j && checkVertical(testTable) != -1)
+						{
+							forbidden.unshift(j);
+							betterNotPlay.push(j);
+						}
+						else
+						{
+							potential[safeMoves[i]]++;
+						}
 						deleteFromColumn(testTable, safeMoves[i]);
 						deleteFromColumn(testTable, j);
 						
-						//console.log("Potential winning move: " + safeMoves[i].toString());
-						
-						potential[safeMoves[i]]++;
 						continue;
 					}
 					deleteFromColumn(testTable, j);
 				}
 				deleteFromColumn(testTable, safeMoves[i]);
+			}
+		}
+	}
+
+	for(var i = 0; i < safeMoves.length; i++)
+	{
+		for(var j = 0; j < betterNotPlay.length; j++)
+		{
+			if(safeMoves[i] == betterNotPlay[j])
+			{
+				safeMoves.splice(i, 1);
 			}
 		}
 	}
@@ -166,6 +185,7 @@ function makeBotMove(table)
 			pos = safeMoves[i];
 		}
 	}
+
 	if(max > 0 && numberOfClicks[pos] < 6)
 	{
 		console.log("Potential win in 2 moves: " + pos.toString());
@@ -202,9 +222,11 @@ function makeBotMove(table)
 			}
 		}
 	}
+
 	var extraSafeMove = -1;
 	var max = 0;
 	var pos = 0;
+
 	for (var i = 0; i < safeMoves.length; i++)
 	{
 		if(potential[safeMoves[i]] > max)
@@ -213,10 +235,10 @@ function makeBotMove(table)
 			pos = safeMoves[i];
 		}
 	}
-	console.log("Max za poraz: " + max.toString());
+
 	if(max > 1 && numberOfClicks[pos] < 6) //if it is not too dangerous, we will rather play a more "aggressive" move
 	{
-		console.log("Potential lose in 2 moves: " + pos.toString());
+		//console.log("Potential lose in 2 moves: " + pos.toString());
 		submitButtonStyle(pos);
 		return;
 	}
@@ -226,6 +248,31 @@ function makeBotMove(table)
 		{
 			extraSafeMove = pos;
 		}
+	}
+
+	//can we connect 3 in line
+	var max3InLine = checkThreeInLine(testTable);
+	var move = -1;
+
+	for(var i = 0; i < safeMoves.length; i++)
+	{
+		if (addToColumn(testTable, safeMoves[i]))
+		{
+			var inLine = checkThreeInLine(testTable);
+
+			if(inLine > max3InLine)
+			{
+				max3InLine = inLine;
+				move = i;
+			}
+			deleteFromColumn(testTable, safeMoves[i]);
+		}
+	}
+	if(move != -1)
+	{
+		console.log("Idemo po 3 u nizu");
+		submitButtonStyle(safeMoves[move]);
+		return;
 	}
 
 	//now trying to find potential wins in 3 moves
@@ -467,7 +514,37 @@ function wait(ms){
     }
 }
 
+function checkHorizontalThreeInLine(table)
+{
+	var sum = 0;
 
+	for (var i = 0; i < 6; i++)
+	{
+		var inRow = 0;
+		var player = 5;
+
+		for (var j = 0; j < 6; j++)
+		{
+			if (table[j][i] == 0)
+			{
+				inRow = 0;
+				player = 5;
+				continue;
+			}
+			if (table[j][i] == player)
+			{
+				if (++inRow == 3 && player == -1)
+					sum++;
+			}
+			else
+			{
+				inRow = 1;
+				player = table[j][i];
+			}
+		}
+	}
+	return sum;
+}
 
 function checkHorizontal(table)
 {
@@ -527,6 +604,38 @@ function checkVertical(table)
 		}
 	}
 	return 2;
+}
+
+function checkVerticalThreeInLine(table)
+{
+	var sum = 0;
+
+	for (var  i = 0; i < 6; i++)
+	{
+		var inRow = 0;
+		var player = 5;
+
+		for (var j = 0; j < 6; j++)
+		{
+			if (table[i][j] == 0)
+			{
+				inRow = 0;
+				player = 5;
+				continue;
+			}
+			if (table[i][j] == player)
+			{
+				if (++inRow == 3 && player == -1)
+					sum++;
+			}
+			else
+			{
+				inRow = 1;
+				player = table[i][j];
+			}
+		}
+	}
+	return sum;
 }
 
 var listOfi = [ 0, 0, 0, 1, 2, 5, 5, 5, 4, 3, -1 ]; //coordinates of the starts the diagonals to check
@@ -616,6 +725,92 @@ function checkDiagonal(table)
 	return 2;
 }
 
+function checkDiagonalThreeInLine(table)
+{
+	var order = 0;
+	var i = listOfi[order];
+	var j = listOfj[order];
+
+	var movei = 1, movej = -1;
+	var inRow = 0;
+	var player = 5;
+
+	var sum = 0;
+	
+	while (i != 5)
+	{
+		while (j >= 0 && j < 6 && i >= 0 && i < 6)
+		{
+			if (table[i][j] == 0)
+			{
+				inRow = 0;
+				player = 5;
+
+				i += movei;
+				j += movej;
+				continue;
+			}
+
+			if (table[i][j] == player)
+			{
+				if (++inRow == 3 && player == -1)
+					sum++;
+			}
+			else
+			{
+				inRow = 1;
+				player = table[i][j];
+			}
+
+			i += movei;
+			j += movej;
+		}
+		i = listOfi[++order];
+		j = listOfj[order]; 
+		inRow = 0;
+		player = 5;
+	}
+
+	movei = -1;
+	movej = -1;
+
+	while (i != -1)
+	{
+		while (j >= 0 && j < 6 && i >= 0 && i < 6)
+		{
+			if (table[i][j] == 0)
+			{
+				inRow = 0;
+				player = 5;
+
+				i += movei;
+				j += movej;
+				continue;
+			}
+
+			if (table[i][j] == player)
+			{
+				if (++inRow == 3)
+					sum++;
+			}
+			else
+			{
+				inRow = 1;
+				player = table[i][j];
+			}
+
+			i += movei;
+			j += movej;
+		}
+		i = listOfi[++order];
+		j = listOfj[order];
+		inRow = 0;
+		player = 5;
+	}
+
+	return sum;
+}
+
 function checkTable(table) //return -1 or 1 if the game is won by any player, 0 if it is a stalemate and 2 if neither
 {
 	var horizontal = checkHorizontal(table);
@@ -637,4 +832,14 @@ function checkTable(table) //return -1 or 1 if the game is won by any player, 0 
 	if (emptyCells == 0)
 		return 0;
 	return 2;
+}
+
+function checkThreeInLine(table)
+{
+	var hor = checkHorizontalThreeInLine(table);
+	var ver = checkVerticalThreeInLine(table);
+	var diag = checkDiagonalThreeInLine(table);
+
+	return hor + ver + diag;
+	//return checkHorizontalThreeInLine(table) + checkVerticalThreeInLine(table) + checkDiagonalThreeInLine(table);
 }
