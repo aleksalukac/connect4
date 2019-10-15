@@ -37,7 +37,7 @@ function makeBotMove(table)
 	}
 	if(moveOrder == 1)
 	{
-		console.log("Our first move");
+		//console.log("Our first move");
 		if(numberOfClicks[3] == 0) submitButtonStyle(3);
 		else
 			submitButtonStyle(2);
@@ -65,7 +65,7 @@ function makeBotMove(table)
 			if (checkTable(testTable) == -1)
 			{
 				deleteFromColumn(testTable, i);
-				console.log("Winning: " + i.toString());
+				//console.log("Winning: " + i.toString());
 				submitButtonStyle(i);
                 return;
 			}
@@ -114,8 +114,8 @@ function makeBotMove(table)
 		}
 	}
 
-	console.log("Forbidden: ");
-	console.log(forbidden);
+	//console.log("Forbidden: ");
+	//console.log(forbidden);
 
 	var safeMoves = [];
 	for (var i = 0; i < 6; i++)
@@ -126,8 +126,8 @@ function makeBotMove(table)
 		}
 	}
 
-	console.log("Safe moves: ");
-	console.log(safeMoves);
+	//console.log("Safe moves: ");
+	//console.log(safeMoves);
 
 	var potential = []; //these moves could lead us to a win in 2 moves
 	for(var i = 0; i < safeMoves.length; i++)
@@ -188,13 +188,14 @@ function makeBotMove(table)
 
 	if(max > 0 && numberOfClicks[pos] < 6)
 	{
-		console.log("Potential win in 2 moves: " + pos.toString());
+		//console.log("Potential win in 2 moves: " + pos.toString());
 		submitButtonStyle(pos);
 		return;
 	}
 
 	//if opponent can win in 2 moves, we will try to stop him
 	potential = []; //these moves could lead us to a win in 2 moves
+	
 	for(var i = 0; i < safeMoves.length; i++)
 		potential.push(0);
 
@@ -270,7 +271,7 @@ function makeBotMove(table)
 	}
 	if(move != -1)
 	{
-		console.log("Idemo po 3 u nizu");
+		//console.log("Idemo po 3 u nizu");
 		submitButtonStyle(safeMoves[move]);
 		return;
 	}
@@ -326,14 +327,14 @@ function makeBotMove(table)
 	}
 	if(max > 0 && numberOfClicks[pos] < 6)
 	{
-		console.log("Potential win in 3 moves: " + pos.toString());
+		//console.log("Potential win in 3 moves: " + pos.toString());
 		submitButtonStyle(pos);
 		return;
 	}
 
 	if(extraSafeMove != -1 && numberOfClicks[extraSafeMove] != 6)
 	{	
-		console.log("Protecting from potential lose in 2 moves " + extraSafeMove.toString());
+		//console.log("Protecting from potential lose in 2 moves " + extraSafeMove.toString());
 		submitButtonStyle(extraSafeMove)
 		return;
 	}
@@ -341,14 +342,14 @@ function makeBotMove(table)
 	//If there are no good options, but bot still has to play, bot will play a random move and lose
 	if(safeMoves.length == 0 && numberOfClicks[forbidden[0]] < 6)
 	{
-		console.log("Surrender: " + forbidden[0].toString());
+		//console.log("Surrender: " + forbidden[0].toString());
 		submitButtonStyle(forbidden[0]);
 		return;
 	}
 
 	//If all the logic above has not given the bot any good choices, it will choose a random safe move (moves in the center are preferred)
 	var random = Math.floor((Math.random() * (safeMoves.length + 2)) % safeMoves.length);
-	console.log("Choosing random safe move: " + safeMoves[random].toString());
+	//console.log("Choosing random safe move: " + safeMoves[random].toString());
 	submitButtonStyle(safeMoves[random]);
 }
 
@@ -376,13 +377,14 @@ function setup(size)
 var color_1 = "#F10026";
 var color1 = "#3d9ad1";
 var neutralColor = "#808080";
-//var canDoFalling = true;
 
-function doCoolFalling(column, place, color, i = 5) {
+function doCoolFalling(column, place, color, i = 5) 
+{
 	if(place == 5) {
 		document.getElementById((column * 10 + 5).toString()).style.backgroundColor = color; 
 		return;  
 	}
+
     if(i < place) return;
 
     if(i + 1 <= 5)
@@ -413,9 +415,8 @@ function dropTableFalling(max, table = matrix, k = 0) {
 				document.getElementById((i*10 + j).toString()).style.backgroundColor = neutralColor;
 			}
 			else
-			{document.getElementById((i*10 + j).toString()).style.backgroundColor = document.getElementById((i*10 + j + 1).toString()).style.backgroundColor; 
-		
-
+			{
+				document.getElementById((i*10 + j).toString()).style.backgroundColor = document.getElementById((i*10 + j + 1).toString()).style.backgroundColor; 
 			}
 		}
 	}
@@ -431,7 +432,6 @@ function congratulations(table){
 	if(res == 1)
 	{
 		document.getElementById("cong").innerText = 'Congratulations! You have won! \n\n Play another game! :)';
-    
 	}
 	else if(res == -1)
 	{
@@ -444,20 +444,21 @@ function congratulations(table){
 }
 
 function newGame() {
-
 	finished = true;
 	var max = numberOfClicks[0];
+
 	for(var i = 1; i < 6; i++)
 	{
 		if(numberOfClicks[i] > max)
 			max = numberOfClicks[i];
 	}
+
 	dropTableFalling(max);
 }
 
 function submitButtonStyleFromPlayer(b) {
-	if(turn == -1 /*&& canDoFalling*/)
-	return
+	if(turn == -1)
+		return
 	submitButtonStyle(b);
 }
 
@@ -466,28 +467,19 @@ function submitButtonStyle(b) {
 
     if(numberOfClicks[b] == 6) return;
 
-	//canDoFalling = false;
     if(turn == -1){
 		doCoolFalling(b, numberOfClicks[b], color_1);
-        //document.getElementById((b*10 + numberOfClicks[b]).toString()).style.backgroundColor = color_1; 
 
-    }
-    else{
+	}
+	else
+	{
         doCoolFalling(b, numberOfClicks[b], color1);
-        //document.getElementById((b*10 + numberOfClicks[b]).toString()).style.backgroundColor = color1;
 	} 
-	
-	//setTimeout(function() { canDoFalling = true}, 300);
 
     matrix[b][numberOfClicks[b]] = turn;
-
-    //console.log(matrix);
-
     turn = -1 * turn;
 
     numberOfClicks[b]++;
-
-    //console.log(checkTable(matrix));
 
     if(checkTable(matrix) != 2)
         {
@@ -498,20 +490,7 @@ function submitButtonStyle(b) {
     if(turn == -1)
         {
 			setTimeout(function(){makeBotMove(matrix);},900);
-           
-           //turn = 1;
         }
-
-    //wait(50);
-    //check();
-}
-
-function wait(ms){
-    var start = new Date().getTime();
-    var end = start;
-    while(end < start + ms) {
-        end = new Date().getTime();
-    }
 }
 
 function checkHorizontalThreeInLine(table)
