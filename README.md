@@ -3,9 +3,9 @@
 
 App created in JS for [LambdaWorks challenge](https://lambdaworks.io/challenge).
 
-## Bot logic explained:
+## Gameplay and bot logic explained:
 After a coin toss (50%) game will choose who will play first (pc or human).
-
+Player can place a coin into a chosen column by pressing any field in that column.
 
 Bot's logic is set into priorities, and they are:
 Markup : 
