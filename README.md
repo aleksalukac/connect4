@@ -2,8 +2,10 @@
 # Connect4 Bot
 
 App created in JS for [LambdaWorks challenge](https://lambdaworks.io/challenge).
+You can try to play this game at [aleksa.lukac.rs/connect4](http://aleksa.lukac.rs/connect4)
 
 ## Gameplay and bot logic explained:
+To start the game just open the index.html file.
 After a coin toss (50%) game will choose who will play first (pc or human).
 Player can place a coin into a chosen column by pressing any field in that column.
 
