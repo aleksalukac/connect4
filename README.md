@@ -5,7 +5,9 @@ App created in JS for [LambdaWorks challenge](https://lambdaworks.io/challenge).
 ## Bot logic explained:
 After a coin toss (50%) game will choose who will play first (pc or human).
 
-Markup : Bot's logic is set into priorities, and they are:
+
+Bot's logic is set into priorities, and they are:
+Markup : 
 	1. If bot can make a move and win, it will make it.
     2. If opponent has 3 coins in line and can connect the 4th in next move, we will play that move to stop him from winning.
     3. If there is a move that bot can play that lets the opponent win in the next move, bot will avoid that move (*forbidden moves*)
