@@ -1,306 +1,209 @@
 var preferred = [3, 2, 4, 1, 5, 0];
 
-function makeBotMove(table)
+var positionValue = {};
+var bestMovePosition = {};
+
+var max_depth = 6;
+
+var win_points = 1000000;
+
+function max(a,b) { return a > b ? a : b; }
+function min(a,b) { return a < b ? a : b; }
+
+function minimizePlay(table, depth = max_depth)
 {
-	var moveOrder = 0;
-	for(var i = 0; i < 6; i++)
-	{
-		moveOrder += numberOfClicks[i];
-	}
-	if(moveOrder == 1)
-	{
-		if(numberOfClicks[3] == 0) submitButtonStyle(3);
-		else
-			submitButtonStyle(2);
-		
-		return;
-	}
-    //let testTable = Object.assign({}, table);
-	//var testTable = JSON.parse(JSON.stringify(table));_.cloneDeep(obj);
-	//these lines didn't work cause testTable still referenced to table (js is stupid ¯\_(ツ)_/¯ )
+	var score = calculateScore(table, -1);
 
-	var testTable = [];
+	if (checkTable(table) == 1 || checkTable(table) == -1) 
+		return [null, checkTable(table) * win_points];
 
-	for(var i=0; i < boardSize; i++) {
-       	testTable[i] = [];
-        for(var j=0; j < boardSize; j++) {
-            testTable[i][j] = table[i][j];
-        }
-    }   
+	if (depth == 0) return [null, score];
+    // Column, score
+    var min = [null, 99999];
 
-	//check if I can win by playing any move
-	for (var i = 0; i < 6; i++)
+	var values = [];
+
+	for (var column = 0; column < 6; column++) 
 	{
-		if (addToColumn(testTable, i))
+        var testTable = [];
+
+		for(var i = 0; i < boardSize; i++) 
 		{
-			if (checkTable(testTable) == -1)
+			testTable[i] = [];
+			for(var j=0; j < boardSize; j++) 
 			{
-				deleteFromColumn(testTable, i);
-				submitButtonStyle(i);
-                return;
+				testTable[i][j] = table[i][j];
 			}
-			deleteFromColumn(testTable, i);
-		}
-	}
+		}   
 
-	//check if opponent can win by playing any move
-	for (var i = 0; i < 6; i++)
-	{
-		if (addToColumn(testTable, i, 1))
+		if (addToColumn(testTable, column, -1))
 		{
-			if (checkTable(testTable) == 1)
-			{
-				deleteFromColumn(testTable, i);
-				submitButtonStyle(i);
-				return;
-			}
-			deleteFromColumn(testTable, i);
-		}
-	}
-	
-	var forbidden = []; //if we play one of these moves, opponent can win in his next move 
-	var betterNotPlay = []; //we are trying to avoid these moves and we want our opponent to play them first, so we could win in the next move
+            var next_move = maximizePlay(testTable, depth - 1);
+			values.push(next_move[1]);
 
-	for (var i = 0; i < 6; i++)
-	{
-		for (var j = 0; j < 6; j++)
-		{
-			if (addToColumn(testTable, i))
+			if (min[0] == null || next_move[1] < min[1]) 
 			{
-				if(addToColumn(testTable, j, 1))
+				if(next_move[1] == 2000000)
 				{
-					if(checkTable(testTable) == 1)
-					{
-						deleteFromColumn(testTable, i);
-						deleteFromColumn(testTable, j);
-						forbidden.push(i);
-						break;
-					}
-					deleteFromColumn(testTable, j);
+					console.log("greska1");
 				}
-				deleteFromColumn(testTable, i);
-			}
-		}
-	}
-
-	var safeMoves = [];
-	for (var i = 0; i < 6; i++)
-	{
-		if(!forbidden.includes(preferred[i]) && numberOfClicks[preferred[i]] < 6)
-		{
-			safeMoves.push(preferred[i]);
-		}
-	}
-
-	var potential = []; //these moves could lead us to a win in 2 moves
-	for(var i = 0; i < safeMoves.length; i++)
-		potential.push(0);
-
-	for (var i = 0; i < safeMoves.length; i++)
-	{
-		for (var j = 0; j < 6; j++)
-		{
-			if (addToColumn(testTable, safeMoves[i]))
-			{
-				if(addToColumn(testTable, j))
-				{
-					if(checkTable(testTable) == -1)
-					{
-						if(safeMoves[i] == j && checkVertical(testTable) != -1)
-						{
-							forbidden.unshift(j);
-							betterNotPlay.push(j);
-						}
-						else
-						{
-							potential[safeMoves[i]]++;
-						}
-						deleteFromColumn(testTable, safeMoves[i]);
-						deleteFromColumn(testTable, j);
-						
-						continue;
-					}
-					deleteFromColumn(testTable, j);
-				}
-				deleteFromColumn(testTable, safeMoves[i]);
-			}
-		}
-	}
-
-	for(var i = 0; i < safeMoves.length; i++)
-	{
-		for(var j = 0; j < betterNotPlay.length; j++)
-		{
-			if(safeMoves[i] == betterNotPlay[j])
-			{
-				safeMoves.splice(i, 1);
-			}
-		}
-	}
-
-	var max = 0;
-	var pos = 0;
-	for (var i = 0; i < safeMoves.length; i++)
-	{
-		if(potential[safeMoves[i]] > max)
-		{
-			max = potential[safeMoves[i]];
-			pos = safeMoves[i];
-		}
-	}
-
-	if(max > 0 && numberOfClicks[pos] < 6)
-	{
-		submitButtonStyle(pos);
-		return;
-	}
-
-	//if opponent can win in 2 moves, we will try to stop him
-	potential = []; //these moves could lead us to a win in 2 moves
-	
-	for(var i = 0; i < safeMoves.length; i++)
-		potential.push(0);
-
-	for (var i = 0; i < safeMoves.length; i++)
-	{
-		for (var j = 0; j < 6; j++)
-		{
-			if (addToColumn(testTable, safeMoves[i], 1))
-			{
-				if(addToColumn(testTable, j, 1))
-				{
-					if(checkTable(testTable) == 1)
-					{
-						deleteFromColumn(testTable, safeMoves[i]);
-						deleteFromColumn(testTable, j);
-						
-						potential[safeMoves[i]]++;
-						continue;
-					}
-					deleteFromColumn(testTable, j);
-				}
-				deleteFromColumn(testTable, safeMoves[i]);
-			}
-		}
-	}
-
-	var extraSafeMove = -1;
-	var max = 0;
-	var pos = 0;
-
-	for (var i = 0; i < safeMoves.length; i++)
-	{
-		if(potential[safeMoves[i]] > max)
-		{
-			max = potential[safeMoves[i]];
-			pos = safeMoves[i];
-		}
-	}
-
-	if(max > 1 && numberOfClicks[pos] < 6) //if it is not too dangerous, we will rather play a more "aggressive" move
-	{
-		submitButtonStyle(pos);
-		return;
-	}
-	else
-	{
-		if(max != 0)
-		{
-			extraSafeMove = pos;
-		}
-	}
-
-	//can we connect 3 in line
-	var max3InLine = checkThreeInLine(testTable);
-	var move = -1;
-
-	for(var i = 0; i < safeMoves.length; i++)
-	{
-		if (addToColumn(testTable, safeMoves[i]))
-		{
-			var inLine = checkThreeInLine(testTable);
-
-			if(inLine > max3InLine)
-			{
-				max3InLine = inLine;
-				move = i;
-			}
-			deleteFromColumn(testTable, safeMoves[i]);
-		}
-	}
-	if(move != -1)
-	{
-		submitButtonStyle(safeMoves[move]);
-		return;
-	}
-
-	//now trying to find potential wins in 3 moves
-
-	for(var i = 0; i < safeMoves.length; i++)
-		potential[i] = 0;
-
-	for (var i = 0; i < safeMoves.length; i++)
-	{
-		for (var j = 0; j < 6; j++)
-		{
-			for(var k = 0; k < 6; k++)
-			{
-				if (addToColumn(testTable, safeMoves[i]))
-				{
-					if(addToColumn(testTable, j))
-					{
-						if(addToColumn(testTable, k))
-						{
-							if(checkTable(testTable) == -1)
-							{
-								deleteFromColumn(testTable, safeMoves[i]);
-								deleteFromColumn(testTable, j);
-								deleteFromColumn(testTable, k);
-								
-								potential[safeMoves[i]]++;
-								continue;
-							}
-							deleteFromColumn(testTable, k);
-						}
-						
-						deleteFromColumn(testTable, j);
-					}
-					deleteFromColumn(testTable, safeMoves[i]);
-				}
+				
+                min[0] = column;
+                min[1] = next_move[1];
 			}
 			
-		}
-	}
-	max = 0;
-	pos = 0;
-	for (var i = 0; i < safeMoves.length; i++)
+			deleteFromColumn(testTable, column);
+        }
+    }
+
+	if(depth == max_depth)
 	{
-		if(potential[safeMoves[i]] > max)
+		console.log("Minimum:")
+		console.log(values);
+	}
+
+    return min;
+}
+
+function maximizePlay(table, depth = max_depth)
+{
+	var score = calculateScore(table, 1);
+
+	if (checkTable(table) == 1 || checkTable(table) == -1) 
+		return [null, checkTable(table) * win_points];
+	
+	if (depth == 0) return [null, score];
+
+	// Column, Score
+	var max = [null, -99999];
+	var values = [];
+	// For all possible moves
+	for (var column = 0; column < 6; column++) 
+	{
+		var testTable = [];
+
+		for(var i = 0; i < boardSize; i++) 
 		{
-			max = potential[safeMoves[i]];
-			pos = safeMoves[i];
+			testTable[i] = [];
+			for(var j=0; j < boardSize; j++) 
+			{
+				testTable[i][j] = table[i][j];
+			}
+		}
+
+		if (addToColumn(testTable, column, 1)) 
+		{
+			var next_move = minimizePlay(testTable, depth - 1); // Recursive calling
+			values.push(next_move[1]);
+
+			// Evaluate new move
+			if (max[0] == null || next_move[1] > max[1])
+			{
+
+				if(next_move[1] == 2000000)
+				{
+					console.log("greska");
+				}
+
+				max[0] = column;
+				max[1] = next_move[1];
+			}
+			
+			deleteFromColumn(testTable, column);
 		}
 	}
-	if(max > 0 && numberOfClicks[pos] < 6)
+ 
+	if(depth == max_depth)
 	{
-		submitButtonStyle(pos);
-		return;
+		console.log("Minimum:")
+		console.log(values);
 	}
 
-	if(extraSafeMove != -1 && numberOfClicks[extraSafeMove] != 6)
-	{	
-		submitButtonStyle(extraSafeMove)
-		return;
-	}
+	return max;
+}
 
-	//If there are no good options, but bot still has to play, bot will play a random move and lose
-	if(safeMoves.length == 0 && numberOfClicks[forbidden[0]] < 6)
+function makeBotMove(table)
+{
+	var ai_move = minimizePlay(table);
+	submitButtonStyle(ai_move[0]);
+	//submitButtonStyle(0);
+}
+
+function calculateScore(table, token)
+{
+	var score = 0;
+
+	for(var j = 2; j <= 3; j++)
+		for(var i = 0; i < 6; i++)
+		{
+			if(table[j][i] == token)
+				score += 3;
+		}
+
+	for(var i = 0; i < 6; i++)
 	{
-		submitButtonStyle(forbidden[0]);
-		return;
+		for(var c = 0; c < 6 - 3; c++)
+		{
+			var arrayStart = c;
+			var arrayEnd = c + 4;
+			score += win_score_heuristic(table[i], token, arrayStart, arrayEnd);
+		}
+
+		for(var c = 0; c < 6 - 3; c++)
+		{
+			var arrayStart = c;
+			var arrayEnd = c + 4;
+			score += win_score_heuristic(table[i], token, arrayStart, arrayEnd);
+		}
 	}
 
-	//If all the logic above has not given the bot any good choices, it will choose a random safe move (moves in the center are preferred)
-	var random = Math.floor((Math.random() * (safeMoves.length + 2)) % safeMoves.length);
-	submitButtonStyle(safeMoves[random]);
+	for(var i = 0; i < 6 - 3; i++)
+	{
+		for(var c = 0; c < 6 - 3; c++)
+		{
+			var array = [];
+			for(var j = 0; j < 4; j++)
+			{
+				array.push(table[i + j][c + j]);
+				score += win_score_heuristic(array, token);
+			}
+
+			array = [];
+			for(var j = 0; j < 4; j++)
+			{
+				array.push(table[i + 3 - j][c + j]);
+				score += win_score_heuristic(array, token);
+			}
+		}
+	}
+	return score * token;
+}
+
+function arrayCount(array, arrayStart, arrayStop, element)
+{
+	var count = 0;
+
+	for(var i = arrayStart; i < arrayStop; i++)
+		if(array[i] == element)
+			count++;
+
+	return count;
+}
+
+function win_score_heuristic(win_array, token, arrayStart, arrayStop)
+{
+	var score = 0;
+	var opponentToken = -token;
+
+	if(arrayCount(win_array, arrayStart, arrayStop, token) == 4)
+		score += 100;
+	else if(arrayCount(win_array, arrayStart, arrayStop, token)  == 3 && arrayCount(win_array, arrayStart, arrayStop, 0)  == 1)
+		score += 5;
+	else if(arrayCount(win_array, arrayStart, arrayStop, token)  == 2 && arrayCount(win_array, arrayStart, arrayStop, 0)  == 2)
+		score += 2;
+		
+	if(arrayCount(win_array, arrayStart, arrayStop, opponentToken)  == 3 && arrayCount(win_array, arrayStart, arrayStop, 0) == 1)
+		score -= 4;
+
+	return score
 }

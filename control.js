@@ -19,6 +19,23 @@ function addToColumn(table, column, turn = -1)
     numberOfClicks[column]++;
     return true;
 }
+/*
+
+function addToColumn(testTable, column, turn = -1)
+{
+    if(!(testTable[column][5] == 0))
+        return false;
+	//console.log(table);
+	for(var i = 0; i < 6; i++)
+	{
+		if(testTable[column][i] == 0)
+		{
+			testTable[column][i] = turn;
+			break;
+		}
+	}
+    return true;
+*/
 
 function deleteFromColumn(table, column)
 {
@@ -131,7 +148,7 @@ function newGame() {
 
 function submitButtonStyleFromPlayer(b) {
 	if(turn == -1)
-		return
+		return;
 	submitButtonStyle(b);
 }
 
@@ -142,7 +159,6 @@ function submitButtonStyle(b) {
 
     if(turn == -1){
 		doCoolFalling(b, numberOfClicks[b], color_1);
-
 	}
 	else
 	{
@@ -158,6 +174,7 @@ function submitButtonStyle(b) {
         {
 			finished = true;
 			congratulations(matrix);
+			//markWin(matrix, checkTable(matrix));
         }
 
     if(turn == -1)
