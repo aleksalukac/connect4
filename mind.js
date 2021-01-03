@@ -23,31 +23,29 @@ function minimizePlay(table, depth = max_depth)
 
 	var values = [];
 
+	var testTable = [];
+
+	for(var i = 0; i < boardSize; i++) 
+	{
+		testTable[i] = [];
+		for(var j=0; j < boardSize; j++) 
+		{
+			testTable[i][j] = table[i][j];
+		}
+	}   
+
 	for (var column = 0; column < 6; column++) 
 	{
-        var testTable = [];
-
-		for(var i = 0; i < boardSize; i++) 
-		{
-			testTable[i] = [];
-			for(var j=0; j < boardSize; j++) 
-			{
-				testTable[i][j] = table[i][j];
-			}
-		}   
-
 		if (addToColumn(testTable, column, -1))
 		{
             var next_move = maximizePlay(testTable, depth - 1);
 			values.push(next_move[1]);
+			//next_move - array with two elements
+			//next_move[0] is the column that will be played
+			//next_move[1] is the score of the table after the move
 
 			if (min[0] == null || next_move[1] < min[1]) 
-			{
-				if(next_move[1] == 2000000)
-				{
-					console.log("greska1");
-				}
-				
+			{				
                 min[0] = column;
                 min[1] = next_move[1];
 			}
@@ -55,12 +53,6 @@ function minimizePlay(table, depth = max_depth)
 			deleteFromColumn(testTable, column);
         }
     }
-
-	if(depth == max_depth)
-	{
-		console.log("Minimum:")
-		console.log(values);
-	}
 
     return min;
 }
@@ -78,19 +70,20 @@ function maximizePlay(table, depth = max_depth)
 	var max = [null, -99999];
 	var values = [];
 	// For all possible moves
+
+	var testTable = [];
+
+	for(var i = 0; i < boardSize; i++) 
+	{
+		testTable[i] = [];
+		for(var j=0; j < boardSize; j++) 
+		{
+			testTable[i][j] = table[i][j];
+		}
+	}
+
 	for (var column = 0; column < 6; column++) 
 	{
-		var testTable = [];
-
-		for(var i = 0; i < boardSize; i++) 
-		{
-			testTable[i] = [];
-			for(var j=0; j < boardSize; j++) 
-			{
-				testTable[i][j] = table[i][j];
-			}
-		}
-
 		if (addToColumn(testTable, column, 1)) 
 		{
 			var next_move = minimizePlay(testTable, depth - 1); // Recursive calling
@@ -99,12 +92,6 @@ function maximizePlay(table, depth = max_depth)
 			// Evaluate new move
 			if (max[0] == null || next_move[1] > max[1])
 			{
-
-				if(next_move[1] == 2000000)
-				{
-					console.log("greska");
-				}
-
 				max[0] = column;
 				max[1] = next_move[1];
 			}
@@ -112,13 +99,7 @@ function maximizePlay(table, depth = max_depth)
 			deleteFromColumn(testTable, column);
 		}
 	}
- 
-	if(depth == max_depth)
-	{
-		console.log("Minimum:")
-		console.log(values);
-	}
-
+	
 	return max;
 }
 
