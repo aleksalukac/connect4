@@ -1,5 +1,3 @@
-var preferred = [3, 2, 4, 1, 5, 0];
-
 var positionValue = {};
 var bestMovePosition = {};
 
@@ -130,11 +128,16 @@ function calculateScore(table, token)
 			score += win_score_heuristic(table[i], token, arrayStart, arrayEnd);
 		}
 
-		for(var c = 0; c < 6 - 3; c++)
+		for(var c = 0; c < 6; c++)
 		{
+			var array = [];
 			var arrayStart = c;
 			var arrayEnd = c + 4;
-			score += win_score_heuristic(table[i], token, arrayStart, arrayEnd);
+			for (var j = c; j < c + 4; j++)
+			{
+				array.push(table[c][j]);
+			}
+			score += win_score_heuristic(array, token, 0, 4);
 		}
 	}
 
